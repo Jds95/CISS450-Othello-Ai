@@ -63,7 +63,7 @@ def valid_move_check(board, piece, xs, ys, n):
 
 
 def get_moves(board, piece, n):
-	moves = []
+	moves = {}
 	for i in range(n):
 		for l in range(n):
 			if board[i][l] != ' ':
@@ -71,7 +71,7 @@ def get_moves(board, piece, n):
 			y = valid_move_check(board, piece, i, l, n)
 			if y[0] == True:
 				# Append to moves the [x,y] of move and y[1] which is list of all pieces to flip.
-				moves.append(([i, l], y[1]))
+				moves[(i, l)] = y[1]
 	print moves
 
 def p_board(board, n):
