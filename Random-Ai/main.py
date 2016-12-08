@@ -9,7 +9,17 @@
 
 import random
 
+# 100 points for corner move, 2 points for side (20 for side if you have corner, 
+# 1 point if no corner), 1 point per flip 
+
+# Corner spots are [0, 0], [n-1, 0], [0, n-1], [n-1,n-1]
+# Note: Dictionary Keys are in form of (x, y) not [x, y]
+# Data associated with keys are list of [x,y] to flip if move is made
+
+
+
 def out_of_range_check(x, y, n):
+	# Check if x or y is less than 0 or greater than the board n
 	if x < 0 or y < 0 or x >= n or y >= n:
 		return True
 	else:
@@ -56,7 +66,7 @@ def valid_move_check(board, piece, xs, ys, n):
 	#Put Space back onto board for [x][y] we checked
 	board[xs][ys] = ' '
 
-	#If no pieces to flip, invalid move
+	# If no pieces to flip, invalid move
 	if len(flip) == 0:
 		return (False, flip)
 
@@ -97,15 +107,15 @@ def initialize_board(board, n):
 	board[(n/2)][(n/2-1)] = "W"
 	return board
 
-# def main():
-# 	n = input()
-# 	x = []
-# 	for i in range(n):
-# 		y = [' '] * n
-# 		x.append(y)
-# 	y = initialize_board(x, n)
-# 	p_board(y, n)
-# 	get_move(n, y, 'B', 10000, 10000)
+def main():
+	n = input()
+	x = []
+	for i in range(n):
+		y = [' '] * n
+		x.append(y)
+	y = initialize_board(x, n)
+	p_board(y, n)
+	get_move(n, y, 'B', 10000, 10000)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
