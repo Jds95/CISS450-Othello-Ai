@@ -72,10 +72,10 @@ def Corners(board, size, player):
     t = size - 1
     #weight = 50 # should only be used if we also compute if we could take the
                  #corner next turn or so...(ie grade the squares near the corner)
-    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1.15
-    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1.15
-    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1.15
-    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1.15
+    topLeft = .25 if board[0][0] == ' ' else 1 if board[0][0] == player else -1.15
+    topRight = .25 if board[0][t] == ' ' else 1 if board[0][t] == player else -1.15
+    botLeft = .25 if board[t][0] == ' ' else 1 if board[t][0] == player else -1.15
+    botRight = .25 if board[t][t] == ' ' else 1 if board[t][t] == player else -1.15
     
     return 100 * (topLeft + topRight + botLeft + botRight) / \
            (abs(topLeft) + abs(topRight) + abs(botLeft) + abs(botRight))
@@ -91,11 +91,33 @@ def PieceCount(board, size, player):
                 ours += 1
             else:
                 theirs += 1
-    return 100 * (ours - thiers)/(ours + theirs)
+    return 100 * (ours - theirs)/(ours + theirs)
     
 #def Movability(board, size, player):
-
+    
 #def Stability(board, size, player):
+#    stable = 0     #stable + 2
+#    semiStable = 0 #semistable +1
+#    unstable = 0   #unstable -1
+#    for r in range(size):
+#        for c in range(size):
+#            if c is player:
+#                #check the piece's stability
+#                for d in range(4):
+#                    oneSide = 0
+#                    for i in range(size-2):
+#                        dx = x + dirx[d] * (i + 1)
+#                        dy = y + diry[d] * (i + 1)
+#                        if dx < 0 or dx > size - 1 or dy < 0 or dy > size - 1:
+#                            ctr = 0; break
+#                        elif board[dy][dx] == player:
+#                            break
+#                        elif board[dy][dx] == ' ':
+#                            ctr = 0; break
+#                        else:
+#                            ctr += 1
+#                    total += ctr
+                    
 
 def EvalBoard(board, size, player):
     #tot = 0
