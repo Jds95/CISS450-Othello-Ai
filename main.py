@@ -72,10 +72,10 @@ def Corners(board, size, player):
     t = size - 1
     #weight = 50 # should only be used if we also compute if we could take the
                  #corner next turn or so...(ie grade the squares near the corner)
-    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1
-    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1
-    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1
-    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1
+    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1.15
+    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1.15
+    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1.15
+    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1.15
     
     return 100 * (topLeft + topRight + botLeft + botRight) / \
            (abs(topLeft) + abs(topRight) + abs(botLeft) + abs(botRight))
@@ -93,21 +93,25 @@ def PieceCount(board, size, player):
                 theirs += 1
     return 100 * (ours - thiers)/(ours + theirs)
     
+#def Movability(board, size, player):
+
+#def Stability(board, size, player):
 
 def EvalBoard(board, size, player):
-    tot = 0
-    for y in range(size):
-        for x in range(size):
-            if board[y][x] == player:
-                # Corner check
-                if (x == 0 or x == size - 1) and (y == 0 or y == size - 1):
-                    tot += 4
-                # Side Check
-                elif (x == 0 or x == size - 1) or (y == 0 or y == size - 1):
-                    tot += 2
-                else:
-                    tot += 1
-    return tot
+    #tot = 0
+    #for y in range(size):
+    #    for x in range(size):
+    #        if board[y][x] == player:
+    #            # Corner check
+    #            if (x == 0 or x == size - 1) and (y == 0 or y == size - 1):
+    #                tot += 4
+    #            # Side Check
+    #            elif (x == 0 or x == size - 1) or (y == 0 or y == size - 1):
+    #                tot += 2
+    #            else:
+    #                tot += 1
+    #return tot
+    return PieceCount(board, size, player) + Corners(board, size, player)
 
 # Test to see if part of tree we are at is out of moves
 def noMoveCheck(board, size, player):
@@ -145,14 +149,6 @@ def AlphaBeta(board, size, player, depth, alpha, beta, maximizingPlayer):
         return v
 
 def BestMove(board, size, player, depth):
-    # Starting min value
-    global minEvalBoard 
-    minEvalBoard= -1 
-
-    # Starting max value
-    global maxEvalBoard 
-    maxEvalBoard = 1000
-
     maxPoints = 0
     mx = -1; my = -1
     for y in range(size):
@@ -167,11 +163,11 @@ def BestMove(board, size, player, depth):
 
 def get_move(board_size, board_state, turn, time_left, opponent_time_left):
 
-    if time_left > 1800000:
+    if time_left > 240000:
         move = BestMove(board_state, board_size, turn, 7)
-    elif time_left > 120000:
+    elif time_left > 160000:
         move = BestMove(board_state, board_size, turn, 5)
-    elif time_left > 40000:
+    elif time_left > 80000:
         move = BestMove(board_state, board_size, turn, 3)
     else:
         move = BestMove(board_state, board_size, turn, 2)        
