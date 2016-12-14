@@ -46,11 +46,53 @@ def ValidMove(board, size, x, y, player):
         return False
     if board[y][x] != ' ':
         return False
-
-    (boardTemp, total) = MakeMove(copy.deepcopy(board), size, x, y, player)
+    
+    total = 0
+    for d in range(8):
+        ctr = 0
+        for i in range(size):
+            dx = x + dirx[d] * (i + 1)
+            dy = y + diry[d] * (i + 1)
+            if dx < 0 or dx > size - 1 or dy < 0 or dy > size - 1:
+                ctr = 0; break
+            elif board[dy][dx] == player:
+                break
+            elif board[dy][dx] == ' ':
+                ctr = 0; break
+            else:
+                ctr += 1
+        total += ctr
+        
+    #(boardTemp, total) = MakeMove(copy.deepcopy(board), size, x, y, player)
     if total == 0:
         return False
     return True
+
+def Corners(board, size, player):
+    t = size - 1
+    #weight = 50 # should only be used if we also compute if we could take the
+                 #corner next turn or so...(ie grade the squares near the corner)
+    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1
+    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1
+    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1
+    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1
+    
+    return 100 * (topLeft + topRight + botLeft + botRight) / \
+           (abs(topLeft) + abs(topRight) + abs(botLeft) + abs(botRight))
+
+def PieceCount(board, size, player):
+    ours = 0
+    theirs = 0
+    for r in board:
+        for c in r:
+            if c == ' ':
+                pass
+            if c == player:
+                ours += 1
+            else:
+                theirs += 1
+    return 100 * (ours - thiers)/(ours + theirs)
+    
 
 def EvalBoard(board, size, player):
     tot = 0
