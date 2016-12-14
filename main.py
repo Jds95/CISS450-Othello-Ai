@@ -17,28 +17,6 @@ minEvalBoard = -1
 # Starting max value
 maxEvalBoard = 1000
 
-def InitBoard(size):
-    if size % 2 == 0: # if board size is even
-        z = (size - 2) / 2
-        board[z][z] = 'B'
-        board[size - 1 - z][z] = 'W'        
-        board[z][size - 1 - z] = 'W'
-        board[size - 1 - z][size - 1 - z] = 'B'
-        
-def PrintBoard():
-    m = len(str(8 - 1))
-    for y in range(8):
-        row = ''
-        for x in range(8):
-            row += board[y][x] 
-            row += ' ' * m
-        print row + ' ' + str(y)
-    print
-    row = ''
-    for x in range(8):
-        row += str(x).zfill(m) + ' '
-    print row + '\n'
-
 def MakeMove(board, size, x, y, player): 
     total = 0
     board[y][x] = player
@@ -124,7 +102,6 @@ def AlphaBeta(board, size, player, depth, alpha, beta, maximizingPlayer):
                         break # alpha cut-off
         return v
 
-
 def BestMove(board, size, player, depth):
     # Starting min value
     global minEvalBoard 
@@ -161,6 +138,28 @@ def get_move(board_size, board_state, turn, time_left, opponent_time_left):
         return move
     else:
         return None
+
+# def InitBoard(size):
+#     if size % 2 == 0: # if board size is even
+#         z = (size - 2) / 2
+#         board[z][z] = 'B'
+#         board[size - 1 - z][z] = 'W'        
+#         board[z][size - 1 - z] = 'W'
+#         board[size - 1 - z][size - 1 - z] = 'B'
+
+# def PrintBoard():
+#     m = len(str(8 - 1))
+#     for y in range(8):
+#         row = ''
+#         for x in range(8):
+#             row += board[y][x] 
+#             row += ' ' * m
+#         print row + ' ' + str(y)
+#     print
+#     row = ''
+#     for x in range(8):
+#         row += str(x).zfill(m) + ' '
+#     print row + '\n'
 
 # def swap_turn(turn):
 #     if turn == 'B':
