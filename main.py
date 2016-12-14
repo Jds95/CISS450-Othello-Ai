@@ -132,7 +132,7 @@ def BestMove(board, size, player, depth):
 
     # Starting max value
     global maxEvalBoard 
-    maxEvalBoard = size * size + 4 * size + 4 + 1 
+    maxEvalBoard = 1000
 
     maxPoints = 0
     mx = -1; my = -1
@@ -140,22 +140,20 @@ def BestMove(board, size, player, depth):
         for x in range(size):
             if ValidMove(board, size, x, y, player):
                 #(boardTemp, totctr) = MakeMove(copy.deepcopy(board), size, x, y, player)
-                points = AlphaBeta(board, size, player, depth, minEvalBoard, maxEvalBoard, True)
+                points = AlphaBeta(board, size, player, depth, minEvalBoard, maxEvalBoard, True) # True inidicates maximizing our move
                 if points > maxPoints:
                     maxPoints = points
                     mx = x; my = y
     return [my, mx]
 
-def swap_turn(turn):
-    if turn == 'B':
-        return 'W'
-    else:
-        return 'B'
-
 def get_move(board_size, board_state, turn, time_left, opponent_time_left):
 
-    if time_left > 100000:
-        move = BestMove(board_state, board_size, turn, 4)
+    if time_left > 1800000:
+        move = BestMove(board_state, board_size, turn, 7)
+    elif time_left > 120000:
+        move = BestMove(board_state, board_size, turn, 5)
+    elif time_left > 40000:
+        move = BestMove(board_state, board_size, turn, 3)
     else:
         move = BestMove(board_state, board_size, turn, 2)        
 
@@ -164,6 +162,11 @@ def get_move(board_size, board_state, turn, time_left, opponent_time_left):
     else:
         return None
 
+# def swap_turn(turn):
+#     if turn == 'B':
+#         return 'W'
+#     else:
+#         return 'B'
 
 # bsize = input()
 # board = [[' ' for x in range(bsize)] for y in range(bsize)]
