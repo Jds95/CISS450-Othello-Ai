@@ -72,11 +72,13 @@ def Corners(board, size, player):
     t = size - 1
     #weight = 50 # should only be used if we also compute if we could take the
                  #corner next turn or so...(ie grade the squares near the corner)
-    topLeft = .25 if board[0][0] == ' ' else 1 if board[0][0] == player else -1.5
-    topRight = .25 if board[0][t] == ' ' else 1 if board[0][t] == player else -1.5
-    botLeft = .25 if board[t][0] == ' ' else 1 if board[t][0] == player else -1.5
-    botRight = .25 if board[t][t] == ' ' else 1 if board[t][t] == player else -1.5
+    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1
+    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1
+    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1
+    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1
     
+    if topLeft+topRight+botLeft+botRight == 0: 
+        return 0
     return 100 * (topLeft + topRight + botLeft + botRight) / \
            (abs(topLeft) + abs(topRight) + abs(botLeft) + abs(botRight))
 
@@ -103,8 +105,7 @@ def Mobility(board, size, player):
                     ours += 1
                 else:
                     theirs += 1
-            if ValidMove(board, size, x, y, 'W'):
-                
+            if ValidMove(board, size, x, y, 'W'):               
                 if player == 'B':
                     ours += 1
                 else:
@@ -265,7 +266,7 @@ def EvalBoard(board, size, player):
     #                tot += 1
     #return tot
     return PieceCount(board, size, player) + Corners(board, size, player) \
-           + Stability(board, size, player) + Mobility(board, size, player)
+          + Mobility(board, size, player)  #+ Stability(board, size, player) + 
 
 # Test to see if part of tree we are at is out of moves
 def noMoveCheck(board, size, player):
@@ -313,14 +314,14 @@ def BestMove(board, size, player, depth):
                 if points > maxPoints:
                     maxPoints = points
                     mx = x; my = y
-    return [mx,my]#[my, mx]
+    return [my, mx]
 
 def get_move(board_size, board_state, turn, time_left, opponent_time_left):
 
     if time_left > 240000:
-        move = BestMove(board_state, board_size, turn, 7)
+        move = BestMove(board_state, board_size, turn, 6)
     elif time_left > 160000:
-        move = BestMove(board_state, board_size, turn, 5)
+        move = BestMove(board_state, board_size, turn, 4)
     elif time_left > 80000:
         move = BestMove(board_state, board_size, turn, 3)
     else:
@@ -331,51 +332,51 @@ def get_move(board_size, board_state, turn, time_left, opponent_time_left):
     else:
         return None
 
-def InitBoard(size):
-    if size % 2 == 0: # if board size is even
-        z = (size - 2) / 2
-        board[z][z] = 'B'
-        board[size - 1 - z][z] = 'W'        
-        board[z][size - 1 - z] = 'W'
-        board[size - 1 - z][size - 1 - z] = 'B'
+# def InitBoard(size):
+#     if size % 2 == 0: # if board size is even
+#         z = (size - 2) / 2
+#         board[z][z] = 'B'
+#         board[size - 1 - z][z] = 'W'        
+#         board[z][size - 1 - z] = 'W'
+#         board[size - 1 - z][size - 1 - z] = 'B'
 
-def PrintBoard():
-    m = len(str(8 - 1))
-    for y in range(8):
-        row = ''
-        for x in range(8):
-            row += board[y][x] 
-            row += ' ' * m
-        print row + ' ' + str(y)
-    print
-    row = ''
-    for x in range(8):
-        row += str(x).zfill(m) + ' '
-    print row + '\n'
+# def PrintBoard():
+#     m = len(str(8 - 1))
+#     for y in range(8):
+#         row = ''
+#         for x in range(8):
+#             row += board[y][x] 
+#             row += ' ' * m
+#         print row + ' ' + str(y)
+#     print
+#     row = ''
+#     for x in range(8):
+#         row += str(x).zfill(m) + ' '
+#     print row + '\n'
 
-def swap_turn(turn):
-    if turn == 'B':
-        return 'W'
-    else:
-        return 'B'
+# def swap_turn(turn):
+#     if turn == 'B':
+#         return 'W'
+#     else:
+#         return 'B'
 
-bsize = 8 #input()
-board = [[' ' for x in range(bsize)] for y in range(bsize)]
-InitBoard(bsize)
-while True:
-    print
-    PrintBoard()
-    turn = 'B'        
-    (x, y) = get_move(bsize, board, turn, 1000000, 1000000)
-    if not (x == -1 and y == -1):
-            (board, totctr) = MakeMove(board, bsize, x, y, turn)
-            print 'User played (X Y): ' + str(x) + ' ' + str(y)
-            print '# of pieces taken: ' + str(totctr)
-    turn = swap_turn(turn)
-    print
-    PrintBoard()
-    (x, y) = get_move(bsize, board, turn, 1000000, 1000000)
-    if not(x == -1 and y == -1):
-        (board, totctr) = MakeMove(board, bsize, x, y, turn)
-        print 'AI played (X Y): ' + str(x) + ' ' + str(y)
-        print '# of pieces taken: ' + str(totctr)
+# bsize = 8 #input()
+# board = [[' ' for x in range(bsize)] for y in range(bsize)]
+# InitBoard(bsize)
+# while True:
+#     print
+#     PrintBoard()
+#     turn = 'B'        
+#     (x, y) = get_move(bsize, board, turn, 1000000, 1000000)
+#     if not (x == -1 and y == -1):
+#             (board, totctr) = MakeMove(board, bsize, x, y, turn)
+#             print 'User played (X Y): ' + str(x) + ' ' + str(y)
+#             print '# of pieces taken: ' + str(totctr)
+#     turn = swap_turn(turn)
+#     print
+#     PrintBoard()
+#     (x, y) = get_move(bsize, board, turn, 1000000, 1000000)
+#     if not(x == -1 and y == -1):
+#         (board, totctr) = MakeMove(board, bsize, x, y, turn)
+#         print 'AI played (X Y): ' + str(x) + ' ' + str(y)
+#         print '# of pieces taken: ' + str(totctr)

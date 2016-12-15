@@ -86,36 +86,38 @@ def get_move(board_size, board_state, turn, time_left, oppenent_time_left):
 				moves[(i, l)] = y[1]
 	m = None
 	for key in moves.keys():
+		if (key == (0, 0) or key == (0, board_size-1) or key == (board_size-1, board_size-1) or key == (board_size-1, 0)):
+			return list(key)
 		if len(moves[key]) > m:
 			m = list(key)
 	return m
 
-def p_board(board, n):
-	s = "+-" * n + "+\n"
-	for item in board:
-		s += "|"
-		for i in item:
-			s += ''.join(i) + "|"
-		s += "\n" + "+-" * n + "+\n"
+# def p_board(board, n):
+# 	s = "+-" * n + "+\n"
+# 	for item in board:
+# 		s += "|"
+# 		for i in item:
+# 			s += ''.join(i) + "|"
+# 		s += "\n" + "+-" * n + "+\n"
 
-	print s
+# 	print s
 
-def initialize_board(board, n):
-	board[(n/2) - 1][(n/2)-1] = "B"
-	board[(n/2)][(n/2)] = "B"
-	board[(n/2) - 1][(n/2)] = "W"
-	board[(n/2)][(n/2-1)] = "W"
-	return board
+# def initialize_board(board, n):
+# 	board[(n/2) - 1][(n/2)-1] = "B"
+# 	board[(n/2)][(n/2)] = "B"
+# 	board[(n/2) - 1][(n/2)] = "W"
+# 	board[(n/2)][(n/2-1)] = "W"
+# 	return board
 
-def main():
-	n = input()
-	x = []
-	for i in range(n):
-		y = [' '] * n
-		x.append(y)
-	y = initialize_board(x, n)
-	p_board(y, n)
-	get_move(n, y, 'B', 10000, 10000)
+# def main():
+# 	n = input()
+# 	x = []
+# 	for i in range(n):
+# 		y = [' '] * n
+# 		x.append(y)
+# 	y = initialize_board(x, n)
+# 	p_board(y, n)
+# 	get_move(n, y, 'B', 10000, 10000)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
