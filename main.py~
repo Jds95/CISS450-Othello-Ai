@@ -68,45 +68,51 @@ def ValidMove(board, size, x, y, player):
         return False
     return True
 
-def Corners(board, size):
+def Corners(board, size, player):
     t = size - 1
     #weight = 50 # should only be used if we also compute if we could take the
                  #corner next turn or so...(ie grade the squares near the corner)
-    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == black else -1
-    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == black else -1
-    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == black else -1
-    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == black else -1
+    topLeft = 0 if board[0][0] == ' ' else 1 if board[0][0] == player else -1
+    topRight = 0 if board[0][t] == ' ' else 1 if board[0][t] == player else -1
+    botLeft = 0 if board[t][0] == ' ' else 1 if board[t][0] == player else -1
+    botRight = 0 if board[t][t] == ' ' else 1 if board[t][t] == player else -1
     
     if topLeft+topRight+botLeft+botRight == 0: 
         return 0
     return 100 * (topLeft + topRight + botLeft + botRight) / \
            (abs(topLeft) + abs(topRight) + abs(botLeft) + abs(botRight))
 
-def PieceCount(board, size):
-    black = 0
-    white = 0
+def PieceCount(board, size, player):
+    ours = 0
+    theirs = 0
     for r in board:
         for c in r:
             if c == ' ':
                 pass
-            if c == black:
-                black += 1
+            if c == player:
+                ours += 1
             else:
-                white += 1
-    return 100 * (black - white)/(black + white)
+                theirs += 1
+    return 100 * (ours - theirs)/(ours + theirs)
     
-def Mobility(board, size):
-    black = 0
-    white = 0
+def Mobility(board, size, player):
+    ours = 0
+    theirs = 0
     for x, r in enumerate(board):
         for y, c in enumerate(r):
             if ValidMove(board, size, x, y, 'B'):
-                black += 1
+                if player == 'B':
+                    ours += 1
+                else:
+                    theirs += 1
             if ValidMove(board, size, x, y, 'W'):               
-                white += 1
-    if (black + white == 0):
+                if player == 'B':
+                    ours += 1
+                else:
+                    theirs += 1
+    if (ours + theirs == 0):
         return 0
-    return 100 * (black - white) / (black + white)
+    return 100 * (ours - theirs) / (ours + theirs)
 
 def StabilityTest0(board, size, player, x, y):
     ret = 0
