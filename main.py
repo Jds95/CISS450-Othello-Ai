@@ -12,10 +12,10 @@ dirx = [-1, 0, 1, -1, 1, -1, 0, 1]
 diry = [-1, -1, -1, 0, 0, 1, 1, 1]
 
 # Starting min value
-minEvalBoard = -1 
+minEvalBoard = -1000000 
 
 # Starting max value
-maxEvalBoard = 1000
+maxEvalBoard = 1000000
 
 def MakeMove(board, size, x, y, player): 
     total = 0
@@ -171,7 +171,7 @@ def AlphaBeta(board, size, player, depth, alpha, beta, maximizingPlayer):
         return v
 
 def BestMove(board, size, player, depth):
-    maxPoints = 0
+    maxPoints = -10000
     mx = -1; my = -1
     for y in range(size):
         for x in range(size):
