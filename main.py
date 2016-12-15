@@ -93,7 +93,23 @@ def PieceCount(board, size, player):
                 theirs += 1
     return 100 * (ours - theirs)/(ours + theirs)
     
-#def Movability(board, size, player):
+def Mobility(board, size, player):
+    ours = 0
+    theirs = 0
+    for x, r in enumerate(board):
+        for y, c in enumerate(r):
+            if ValidMove(board, size, x, y, 'B'):
+                if player == 'B':
+                    ours += 1
+                else:
+                    theirs += 1
+            if ValidMove(board, size, x, y, 'W'):
+                
+                if player == 'B':
+                    ours += 1
+                else:
+                    theirs += 1
+    return 100 * (ours - theirs) / (ours + theirs)
 
 def StabilityTest0(board, size, player, x, y):
     ret = 0
@@ -247,7 +263,7 @@ def EvalBoard(board, size, player):
     #                tot += 1
     #return tot
     return PieceCount(board, size, player) + Corners(board, size, player) \
-           + Stability(board, size, player)
+           + Stability(board, size, player) + Mobility(board, size, player)
 
 # Test to see if part of tree we are at is out of moves
 def noMoveCheck(board, size, player):
