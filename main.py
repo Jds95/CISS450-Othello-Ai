@@ -259,8 +259,8 @@ def EvalBoard(board, size, player):
     #            else:
     #                tot += 1
     #return tot
-    return PieceCount(board, size, player) + Corners(board, size, player) \
-          + Mobility(board, size, player)  #+ Stability(board, size, player) + 
+    return PieceCount(board, size) + Corners(board, size) \
+          + Mobility(board, size)  #+ Stability(board, size, player) + 
 
 # Test to see if part of tree we are at is out of moves
 def noMoveCheck(board, size, player):
@@ -280,7 +280,7 @@ def AlphaBeta(board, size, player, depth, alpha, beta, maximizingPlayer):
             for x in range(size):
                 if ValidMove(board, size, x, y, player):
                     (boardTemp, totctr) = MakeMove(copy.deepcopy(board), size, x, y, player)
-                    v = max(v, AlphaBeta(boardTemp, size, player, depth - 1, alpha, beta, False))
+                    v = max(v, AlphaBeta(boardTemp, size, 'W', depth - 1, alpha, beta, False))
                     alpha = max(alpha, v)
                     if beta <= alpha:
                         break # beta cut-off
@@ -291,7 +291,7 @@ def AlphaBeta(board, size, player, depth, alpha, beta, maximizingPlayer):
             for x in range(size):
                 if ValidMove(board, size, x, y, player):
                     (boardTemp, totctr) = MakeMove(copy.deepcopy(board), size, x, y, player)
-                    v = min(v, AlphaBeta(boardTemp, size, player, depth - 1, alpha, beta, True))
+                    v = min(v, AlphaBeta(boardTemp, size, 'B', depth - 1, alpha, beta, True))
                     beta = min(beta, v)
                     if beta <= alpha:
                         break # alpha cut-off
@@ -304,7 +304,7 @@ def BestMove(board, size, player, depth):
         for x in range(size):
             if ValidMove(board, size, x, y, player):
                 #(boardTemp, totctr) = MakeMove(copy.deepcopy(board), size, x, y, player)
-                points = AlphaBeta(board, size, player, depth, minEvalBoard, maxEvalBoard, True) # True inidicates maximizing our move
+                points = AlphaBeta(board, size, player, depth, minEvalBoard, maxEvalBoard, player=='B') # True inidicates maximizing our move
                 if points > maxPoints:
                     maxPoints = points
                     mx = x; my = y
