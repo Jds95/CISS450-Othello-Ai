@@ -8,8 +8,8 @@
 # ------------------------------------------
 import os, copy
 # 8 directions
-dirx = [-1, 0, 1, -1, 1, -1, 0, 1]
-diry = [-1, -1, -1, 0, 0, 1, 1, 1]
+dirx = [-1, 1, 0, 0, -1, 1, -1, 1]
+diry = [-1, 1, -1, 1, 1, -1, 0, 0]
 
 # Starting min value
 minEvalBoard = -1000000 
@@ -94,30 +94,143 @@ def PieceCount(board, size, player):
     return 100 * (ours - theirs)/(ours + theirs)
     
 #def Movability(board, size, player):
+
+def StabilityTest0(board, size, player, x, y):
+    ret = 0
+    for d in range(4):
+        side1 = 0
+        side2 = 0
+        # looking for opponent pieces that can take this
+        for i in range(size - 2):
+            # one side
+            if (not side1):
+                dx = x + dirx[2*d] * (i + 1)
+                dy = y + diry[2*d] * (i + 1)
+                if dx < 0 or dx > size - 1 or dy < 0 or dy > size - 1:
+                    side1 = 0
+                elif board[dy][dx] == ' ':
+                    side1 = 0
+                elif board[dy][dx] == player:
+                    side1 = 0
+                elif abs(dy - y) <= 1 and abs(dx - x) <= 1:
+                    side1 = 1
+            if (not side2):
+                # other side
+                dx = x + dirx[2*d+1]
+                dy = y + diry[2*d+1]
+                if dx < 0 or dx > size - 1 or dy < 0 or dy > size - 1:
+                    side2 = 0
+                elif board[dy][dx] == ' ':
+                    side2 = 0
+                elif board[dy][dx] == player:
+                    side2 = 0
+                else:
+                    side2 = 1
+            if (side1 and side2):
+                side1 = 0
+                side2 = 0
+                break
+        if (side1 or side2):
+            ret += 1
+            break # remove if we want to count the same piece
+                  # more than once, ie. recognize pieces are super
+                  # unstable
+    return ret
+
+def StabilityTest1RowCalc(board, size, player, y, L, R):
+    ret = 0
     
-#def Stability(board, size, player):
-#    stable = 0     #stable + 2
-#    semiStable = 0 #semistable +1
-#    unstable = 0   #unstable -1
-#    for r in range(size):
-#        for c in range(size):
-#            if c is player:
-#                #check the piece's stability
-#                for d in range(4):
-#                    oneSide = 0
-#                    for i in range(size-2):
-#                        dx = x + dirx[d] * (i + 1)
-#                        dy = y + diry[d] * (i + 1)
-#                        if dx < 0 or dx > size - 1 or dy < 0 or dy > size - 1:
-#                            ctr = 0; break
-#                        elif board[dy][dx] == player:
-#                            break
-#                        elif board[dy][dx] == ' ':
-#                            ctr = 0; break
-#                        else:
-#                            ctr += 1
-#                    total += ctr
-                    
+    contiguous = True
+    endpoint = -1
+    if L:
+        for x in range(1, size - 1, 1):
+            if board[x][y] != player:
+                contiguous = False
+                endpoint = x
+                break
+            ret += 1
+            if x == size - 2:
+                if contiguous:
+                    endpoint = size - 2
+                else:
+                    endpoint = size - 3
+    
+    contiguous = True
+    if R:
+        for x in range(size - 1, 0, -1):
+            if x > endpoint:
+                if board[x][y] != player:
+                    contiguous = False
+                    endpoint = x
+                    break
+                ret += 1
+            else:
+                break
+    return ret
+
+def StabilityTest1ColCalc(board, size, player, x, T, B):
+    ret = 0
+    
+    contiguous = True
+    endpoint = -1
+    if T:
+        for y in range(1, size - 1, 1):
+            if board[x][y] != player:
+                contiguous = False
+                endpoint = y
+                break
+            ret += 1
+            if y == size - 2:
+                if contiguous:
+                    endpoint = size - 2
+                else:
+                    endpoint = size - 3
+    
+    contiguous = True
+    if B:
+        for y in range(size - 1, 0, -1):
+            if y > endpoint:
+                if board[x][y] != player:
+                    contiguous = False
+                    endpoint = y
+                    break
+                ret += 1
+            else:
+                break
+    return ret
+    
+
+def StabilityTest1(board, size, player, x, y):
+    ret = 0
+
+    topLeft = 1 if board[0][0] == player else 0 
+    topRight = 1 if board[0][t] == player else 0
+    botLeft = 1 if board[t][0] == player else 0
+    botRight = 1 if board[t][t] == player else 0
+
+    ret += StabilityTest1RowCalc(board, size, player, 0, topLeft, topRight)
+    ret += StabilityTest1RowCalc(board, size, player, size-1, botLeft, botRight)
+    ret += StabilityTest1ColCalc(board, size, player, 0, topLeft, botLeft)
+    ret += StabilityTest1ColCalc(board, size, player, size-1, topRight, botRight)
+    ret += topLeft + topRight + botLeft + botRight
+    return ret
+
+
+def Stability(board, size, player):
+    total = 0
+    stable = 0     #stable + 1
+    semiStable = 0 #semistable +0
+    unstable = 0   #unstable -1
+    for x in range(size):
+        for y in range(size):
+            if c is player:
+                total += 1
+                #check the piece's stability
+                unstable += StabilityTest0(board, size, player, x, y)
+    stable += StabilityTest1(board, size, player, x, y)
+    unstable = total - stable - semiStable
+
+    return 100 * (stable - unstable) / (total)
 
 def EvalBoard(board, size, player):
     #tot = 0
@@ -133,7 +246,8 @@ def EvalBoard(board, size, player):
     #            else:
     #                tot += 1
     #return tot
-    return PieceCount(board, size, player) + Corners(board, size, player)
+    return PieceCount(board, size, player) + Corners(board, size, player) \
+           + Stability(board, size, player)
 
 # Test to see if part of tree we are at is out of moves
 def noMoveCheck(board, size, player):
